@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Task;
-use Illuminate\Http\Request;
 
 use App\Http\Requests\StoreTaskCategoryRequest;
 use App\Http\Requests\UpdateTaskCategoryRequest;
@@ -18,7 +16,7 @@ class TaskCategoryController extends Controller
         return Inertia::render('TaskCategories/Index', [
             'taskCategories' => TaskCategory::query()
                 ->withCount('tasks')
-                ->paginate(10),
+                ->paginate(5),
         ]);
     }
  
