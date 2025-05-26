@@ -27,9 +27,18 @@ interface Props {
 defineProps<Props>();
 
 const deleteCategory = (taskCategory: TaskCategory) => {
-    if (confirm('Are you sure you want to delete this task category?')) {
-        router.delete(route('task-categories.destroy', { id: taskCategory.id }));
-        toast.success('Task category deleted successfully');
+    if (taskCategory.tasks_count === 0) {
+        if (confirm('Are you sure you want to delete this task category?')) {
+            router.delete(route('task-categories.destroy', taskCategory.id));
+            toast.success('Task category deleted successfully.');
+        }
+    } else {
+        if (confirm('This category has tasks assigned to it. Are you sure want to delete it? This will also delete all tasks assigned to this category.',)
+        )
+        {
+            router.delete(route('task-categories.destroy', taskCategory.id));
+            toast.success('Task category and all its tasks deleted successfully.');
+        }
     }
 };
 
