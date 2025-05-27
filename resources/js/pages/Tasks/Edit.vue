@@ -12,7 +12,8 @@ import AppLayout from '@/layouts/AppLayout.vue';
 
 import { Head, useForm, router } from '@inertiajs/vue3';
 
-import { type BreadcrumbItem, Task } from '@/types';
+import { type BreadcrumbItem, Task, TaskCategory } from '@/types';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 
 import { Calendar } from '@/components/ui/calendar';
@@ -23,6 +24,7 @@ import { CalendarIcon } from 'lucide-vue-next';
 
 interface Props {
     task: Task;
+    categories: TaskCategory[];
 }
 
 const df = new DateFormatter('en-US', {
@@ -45,6 +47,7 @@ const form = useForm({
     is_completed: task.is_completed,
     due_date: task.due_date ? fromDate(new Date(task.due_date)) : null,
     media: '',
+    categories: task.task_categories.map((category) => category.id),
 
 });
 
@@ -135,6 +138,18 @@ const submitForm = () => {
                     <InputError :message="form.errors.media" />
 
                     <img v-if="task.mediaFile" :src="task.mediaFile.original_url" class="w-32 h-32 rounded-lg mx-auto mt-2" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label htmlFor="categories">Categories</Label>
+
+                    <ToggleGroup type="multiple" variant="outline" size="lg" v-model="form.categories">
+                        <ToggleGroupItem v-for="category in categories"  :key="category.id" :value="category.id">
+                            {{ category.name }}
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+
+                    <InputError :message="form.errors.categories" />
                 </div>
 
                 <div class="flex items-center gap-4">

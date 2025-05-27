@@ -34,12 +34,21 @@ class Task extends Model implements HasMedia
     ];
 
 
+    // Em App\Models\Task.php
     public function getMediaFileAttribute()
     {
-        if($this->relationLoaded('media')){
-            return $this->getFirstMedia('media');
+        // Verifica se a relação 'media' foi carregada (o que ->with('media') faz)
+        if ($this->relationLoaded('media')) {
+            // Tenta obter o primeiro item da coleção 'default' (ou a coleção que você usou ao salvar)
+            $mediaItem = $this->getFirstMedia(); // Ou $this->getFirstMedia('nome_da_sua_colecao_se_nao_for_default')
+
+            if ($mediaItem) {
+                return [
+                    'original_url' => $mediaItem->getFullUrl() // Retorna a URL completa
+                ];
+            }
         }
-        return null;
+        return null; // Retorna null se não houver mídia ou a relação não estiver carregada
     }
 
     public function taskCategories(): BelongsToMany

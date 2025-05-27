@@ -8,7 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, TaskCategory } from '@/types';
+
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -18,6 +20,15 @@ import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
 import { CalendarIcon } from 'lucide-vue-next';
 import { useForm } from '@inertiajs/vue3';
 
+
+interface Props{
+    categories: TaskCategory[];
+}
+
+const props = defineProps<Props>();
+
+const categories = props.categories;
+
 const df = new DateFormatter('en-US', {
     dateStyle: 'short',
 });
@@ -26,7 +37,8 @@ const df = new DateFormatter('en-US', {
 const form = useForm({
     name: '',
     due_date: undefined,
-    media: '',
+    media: undefined as string | File | undefined,
+    categories: [],
 });
 
 const fileSelected = (event: Event) => {
@@ -45,7 +57,6 @@ const submitForm = () => {
         ...data,
         due_date: data.due_date ? data.due_date.toDate(getLocalTimeZone()) : null,
     })).post(route('tasks.store'), {
-        forceFormData: true,
         preserveScroll: true,
     });
 };
@@ -100,6 +111,18 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <progress v-if="form.progress" :value="form.progress.percentage" max="100">{form.progress.percentage}%</progress>
 
                     <InputError :message="form.errors.media" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label htmlFor="categories">Categories</Label>
+ 
+                    <ToggleGroup type="multiple" variant="outline" size="lg" v-model="form.categories">
+                        <ToggleGroupItem v-for="category in categories" :key="category.id" :value="category.id">
+                            {{ category.name }}
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+ 
+                    <InputError :message="form.errors.categories" />
                 </div>
 
                 <div class="flex items-center gap-4">

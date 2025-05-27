@@ -10,7 +10,7 @@ import {Button, buttonVariants} from '@/components/ui/button';
 import { toast } from 'vue-sonner';
 
 
-import { type BreadcrumbItem, PaginatedResponse, Task } from '@/types';
+import { type BreadcrumbItem, PaginatedResponse, Task, TaskCategory } from '@/types';
 import Pagination from '@/components/Pagination.vue';
 
 // import { TablePagination } from '@/components/table-pagination';
@@ -23,9 +23,12 @@ const df = new DateFormatter('en-US', {
 
 interface Props {
     tasks: PaginatedResponse<Task>;
+    categories: TaskCategory[];
+    selectedCategories: string[];
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const selectedCategories: string[] = props.selectedCategories ? props.selectedCategories : [];
 
 const deleteTask = (id: number) => {
     if (confirm('Are you sure you want to delete this task?')) {
@@ -39,6 +42,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Tasks', href: '/tasks' },
 ];
 
+const selectCategory = (id: string) => {
+    const selected = selectedCategories.includes(id)
+        ? selectedCategories.filter((category) => category !== id)
+        : [...selectedCategories, id];
+    router.visit('/tasks', { data: { categories: selected } });
+};
+
 </script>
 
 <template>
@@ -50,11 +60,18 @@ const breadcrumbs: BreadcrumbItem[] = [
 
             <Link :class="buttonVariants({variant: 'outline'})" href="/task-categories"> Manage Task Categories</Link>
         </div>
+
+        <div class="mt-4 flex flex-row justify-center gap-x-2">
+            <Button v-for="category in categories" :key="category.id" @click="selectCategory(category.id.toString())" :class="buttonVariants({ variant: (selectedCategories.includes(category.id.toString()) ? 'default' : 'secondary') })">
+                {{ category.name }} ({{ category.tasks_count }})
+            </Button>
+        </div>
         <Table class="mt-4">
             <TableHeader>
                 <TableRow>
                     <TableHead>Task</TableHead>
                     <TableHead>File</TableHead>
+                    <TableHead class="w-[200px]">Categories</TableHead>
                     <TableHead class="w-[100px] text-center">Status</TableHead>
                     <TableHead class="w-[100px] text-center">Due Date</TableHead>
                     <TableHead class="w-[100px] text-center" >Actions</TableHead> 
@@ -68,6 +85,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <a v-if="task.mediaFile" :href="task.mediaFile.original_url" target="_blank">
                             <img :src="task.mediaFile.original_url" class="h-8 w-8" />
                         </a>
+                    </TableCell>
+                    <TableCell>
+                        <span v-for="category in task.task_categories" :key="category.id" class="mr-2 rounded-full bg-gray-200 px-2 py-1 text-gray-800"> {{ category.name }}</span>
                     </TableCell>
                     <TableCell :class="{'text-green-600': task.is_completed, 'text-red-700': !task.is_completed}">
                         {{ task.is_completed ? 'Completed' : 'In Progress' }}
