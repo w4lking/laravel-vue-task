@@ -1,25 +1,47 @@
-# Laravel + Vue Starter Kit
+# Laravel + Vue Task Manager
 
-## Introduction
+## 📌 Sobre o Projeto
 
-Our Vue starter kit provides a robust, modern starting point for building Laravel applications with a Vue frontend using [Inertia](https://inertiajs.com).
+Este é um sistema de gerenciamento de tarefas. O projeto utiliza **Laravel** no backend com **Vue 3 + Inertia.js** no frontend, oferecendo uma aplicação SPA moderna com recursos para criar, editar e excluir categorias de tarefas.
 
-Inertia allows you to build modern, single-page Vue applications using classic server-side routing and controllers. This lets you enjoy the frontend power of Vue combined with the incredible backend productivity of Laravel and lightning-fast Vite compilation.
+O objetivo principal é demonstrar habilidades práticas com o stack Laravel + Vue, integrando conceitos de API RESTful, autenticação, rotas protegidas e UI com TailwindCSS e shadcn-vue.
 
-This Vue starter kit utilizes Vue 3 and the Composition API, TypeScript, Tailwind, and the [shadcn-vue](https://www.shadcn-vue.com) component library.
+## 🧩 Funcionalidades
 
-## Official Documentation
+- [x] CRUD de categorias de tarefas
+- [x] Relacionamento com tarefas (com contagem por categoria)
+- [x] Paginação de categorias
+- [x] Validação com Form Requests (Laravel)
+- [x] Integração com Inertia.js
+- [x] Interface moderna com TailwindCSS e shadcn-vue
 
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
+## 🛠️ Tecnologias Utilizadas
 
-## Contributing
+- **Laravel 10** (PHP)
+- **Vue 3** + **Composition API**
+- **Inertia.js**
+- **Vite**
+- **TailwindCSS**
+- **shadcn-vue**
 
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🚀 Como rodar o projeto
 
-## Code of Conduct
+```bash
+# Clone o repositório
+git clone https://github.com/w4lking/laravel-vue-task.git
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Instale as dependências do Laravel
+composer install
 
-## License
+# Instale as dependências do Node (frontend)
+npm install && npm run dev
 
-The Laravel + Vue starter kit is open-sourced software licensed under the MIT license.
+# Configure o ambiente
+cp .env.example .env
+php artisan key:generate
+
+# Rode as migrações
+php artisan migrate
+
+# Inicie o servidor
+php artisan serve
