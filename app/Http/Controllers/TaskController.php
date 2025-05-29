@@ -77,7 +77,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $task->load(['media', 'taskCategory']);
+        $task->load(['media', 'taskCategories']);
         $task->append('mediaFile');
 
         return Inertia::render('Tasks/Edit', [

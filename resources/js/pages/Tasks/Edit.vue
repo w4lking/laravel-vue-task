@@ -15,6 +15,8 @@ import { Head, useForm, router } from '@inertiajs/vue3';
 import { type BreadcrumbItem, Task, TaskCategory } from '@/types';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
+import { toast } from 'vue-sonner';
+
 
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -62,6 +64,7 @@ const fileSelected = (event: Event) => {
     form.media = file;
 };
 
+// Em Task/Edit.vue
 const submitForm = () => {
     form.transform((data) => ({
         ...data,
@@ -69,20 +72,15 @@ const submitForm = () => {
     })).put(route('tasks.update', task.id), {
         forceFormData: true,
         preserveScroll: true,
+        // Opcional: Adicione callbacks para depuração ou feedback ao usuário
+        onSuccess: () => {
+            toast.success('Task updated successfully');
+        },
+        onError: (errors) => {
+            console.error('Error updating task:', errors);
+            toast.error('Error updating task');
+        },
     });
-
-    router.post(route('tasks.update', task.id),
-        {
-            ...form.data(),
-            due_date: form.data().due_date ? form.data().due_date.toDate(getLocalTimeZone()) : null,
-            _method: 'PUT'
-        },
-        {
-            forceFormData: true,
-            preserveScroll: true,
-        },
-    );
-        
 };
 
 </script>
