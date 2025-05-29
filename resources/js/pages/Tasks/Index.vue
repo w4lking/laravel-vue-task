@@ -83,7 +83,7 @@ const selectCategory = (id: string) => {
                     <TableCell>{{task.name}}</TableCell>
                     <TableCell>
                         <a v-if="task.mediaFile" :href="task.mediaFile.original_url" target="_blank">
-                            <img :src="task.mediaFile.original_url" class="h-8 w-8" />
+                            <img src="/favicon.ico" class="h-8 w-8" />
                         </a>
                     </TableCell>
                     <TableCell>

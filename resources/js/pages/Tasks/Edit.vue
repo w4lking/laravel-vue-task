@@ -65,20 +65,32 @@ const fileSelected = (event: Event) => {
 };
 
 // Em Task/Edit.vue
+// Em Task/Edit.vue - dentro do método submitForm()
+
 const submitForm = () => {
-    form.transform((data) => ({
-        ...data,
-        due_date: data.due_date ? data.due_date.toDate(getLocalTimeZone()) : null,
-    })).put(route('tasks.update', task.id), {
+    form.transform((data) => {
+        // Log para ver o objeto 'data' exatamente como ele entra na transformação
+        console.log('Data antes da transformação de due_date:', data);
+
+        let transformedDueDate = null;
+        // Verifica se data.due_date existe (não é undefined ou null)
+        // E se é um objeto com o método toDate (confirmando que é um objeto de data do i18n)
+        if (data.due_date && typeof data.due_date.toDate === 'function') {
+            transformedDueDate = data.due_date.toDate(getLocalTimeZone());
+        }
+
+        return {
+            ...data,
+            due_date: transformedDueDate,
+        };
+    }).put(route('tasks.update', task.id), {
         forceFormData: true,
         preserveScroll: true,
-        // Opcional: Adicione callbacks para depuração ou feedback ao usuário
         onSuccess: () => {
             toast.success('Task updated successfully');
         },
         onError: (errors) => {
-            console.error('Error updating task:', errors);
-            toast.error('Error updating task');
+            toast.error('Failed to update task');
         },
     });
 };
@@ -128,20 +140,20 @@ const submitForm = () => {
                 <div class="grid gap-2">
                     <Label htmlFor="name">Media</Label>
 
-                    <Input type="file" id="name" v-on:change="fileSelected($event)" class="mt-1 block w-full"/>
+                    <Input type="file" id="name" v-on:change="fileSelected($event)" class="mt-1 block w-full"></Input>
 
                     
                     <progress v-if="form.progress" :value="form.progress.percentage" max="100">{form.progress.percentage}%</progress>
 
                     <InputError :message="form.errors.media" />
 
-                    <img v-if="task.mediaFile" :src="task.mediaFile.original_url" class="w-32 h-32 rounded-lg mx-auto mt-2" />
+                    <img v-if="task.mediaFile" src="/favicon.svg" class="w-32 h-32 rounded-lg mx-auto mt-2" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label htmlFor="categories">Categories</Label>
 
-                    <ToggleGroup type="multiple" variant="outline" size="lg" v-model="form.categories">
+                    <ToggleGroup type="multiple" variant="outline" size="lg" v-model="form.categories" class="w-full">
                         <ToggleGroupItem v-for="category in categories"  :key="category.id" :value="category.id">
                             {{ category.name }}
                         </ToggleGroupItem>
