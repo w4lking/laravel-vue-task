@@ -44,6 +44,9 @@ const props = defineProps<Props>();
 
 const task = props.task;
 
+
+
+
 const form = useForm({
     name: task.name,
     is_completed: task.is_completed,
@@ -64,36 +67,30 @@ const fileSelected = (event: Event) => {
     form.media = file;
 };
 
+
+
 // Em Task/Edit.vue
 // Em Task/Edit.vue - dentro do método submitForm()
 
+
 const submitForm = () => {
-    form.transform((data) => {
-        // Log para ver o objeto 'data' exatamente como ele entra na transformação
-        console.log('Data antes da transformação de due_date:', data);
+    const isFile = form.media instanceof File;
 
-        let transformedDueDate = null;
-        // Verifica se data.due_date existe (não é undefined ou null)
-        // E se é um objeto com o método toDate (confirmando que é um objeto de data do i18n)
-        if (data.due_date && typeof data.due_date.toDate === 'function') {
-            transformedDueDate = data.due_date.toDate(getLocalTimeZone());
-        }
-
-        return {
-            ...data,
-            due_date: transformedDueDate,
-        };
-    }).put(route('tasks.update', task.id), {
-        forceFormData: true,
+    form.transform((data) => ({
+        name: data.name ?? '', // <-- nunca undefined
+        due_date: data.due_date ? data.due_date.toDate(getLocalTimeZone()) : null,
+        media: data.media ?? '', // <-- mantém vazio se não for File
+        categories: Array.isArray(data.categories) ? data.categories : [],
+        is_completed: data.is_completed ? '1' : '0', // <- convertido para string
+    })).put(route('tasks.update', task.id), {
+        forceFormData: isFile,
         preserveScroll: true,
-        onSuccess: () => {
-            toast.success('Task updated successfully');
-        },
-        onError: (errors) => {
-            toast.error('Failed to update task');
-        },
+        onSuccess: () => toast.success('Task updated successfully'),
+        onError: () => toast.error('Failed to update task'),
     });
 };
+
+
 
 </script>
 
@@ -140,7 +137,7 @@ const submitForm = () => {
                 <div class="grid gap-2">
                     <Label htmlFor="name">Media</Label>
 
-                    <Input type="file" id="name" v-on:change="fileSelected($event)" class="mt-1 block w-full"></Input>
+                    <Input type="file" id="file" v-on:change="fileSelected($event)" class="mt-1 block w-full"></Input>
 
                     
                     <progress v-if="form.progress" :value="form.progress.percentage" max="100">{form.progress.percentage}%</progress>
