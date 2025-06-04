@@ -2,11 +2,15 @@
 
 import InputError from '@/components/InputError.vue';
 
+
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+
+import { Card, CardContent, CardFooter, CardTitle, CardDescription, CardHeader } from '@/components/ui/card';    
+
 
 import AppLayout from '@/layouts/AppLayout.vue';
 
@@ -97,71 +101,90 @@ const submitForm = () => {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
+
         <Head title="Edit Task" />
+
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <form class="space-y-6" @submit.prevent="submitForm">
-                <div class="grid gap-2">
-                    <Label htmlFor="name">Task Name *</Label>
 
-                    <Input id="name" v-model="form.name" class="mt-1 block w-full"/>
+                <Card class="py-6">
+                    <CardHeader>
+                        <CardTitle>Edit Task</CardTitle>
+                    </CardHeader>
 
-                    <InputError :message="form.errors.name" />
-                </div>
+                    <CardContent>
+                        <div class="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+                            <div class="md:col-span-2 lg:col-span-2 grid gap-2">
+                                <Label htmlFor="name">Task Name * <InputError :message="form.errors.name" /></Label>
 
-                <div class="grid gap-2">
-                    <Label htmlFor="name">Due Date</Label>
+                                <Input id="name" v-model="form.name" class="mt-1 block w-full"/>
 
-                    <Popover>
-                        <PopoverTrigger as-child>
-                            <Button variant="outline" :class="cn('w-[280px] justify-start text-left font-normal', !form.due_date && 'text-muted-foreground')">
-                                <CalendarIcon class="mr-2 h-4 w-4" />
-                                {{ form.due_date ? df.format(new Date(form.due_date.toDate(getLocalTimeZone()))) : 'Select a date' }}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent class="w-auto p-0">
-                            <Calendar v-model="form.due_date" initial-focus />
-                        </PopoverContent>
-                    </Popover>
+                            </div>
 
-                    <InputError :message="form.errors.due_date" />
-                </div>
+                            <div class="grid gap-2">
+                                <Label htmlFor="name">Due Date</Label>
 
-                <div class="grid gap-2">
-                    <Label htmlFor="is_completed">Completed</Label>
+                                <Popover>
+                                    <PopoverTrigger as-child>
+                                        <Button variant="outline" :class="cn('w-full justify-start text-left font-normal', !form.due_date && 'text-muted-foreground')">
+                                            <CalendarIcon class="mr-2 h-4 w-4" />
+                                            {{ form.due_date ? df.format(new Date(form.due_date.toDate(getLocalTimeZone()))) : 'Select a date' }}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent class="w-auto p-0">
+                                        <Calendar v-model="form.due_date" initial-focus />
+                                    </PopoverContent>
+                                </Popover>
 
-                    <Switch id="is_completed" v-model:checked="form.is_completed" class="mt-1" />
+                                <InputError :message="form.errors.due_date" />
+                            </div>
+                        </div>
 
-                    <InputError :message="form.errors.is_completed" />
-                </div>
+                        <div class="grid gap-2">
+                            <Label htmlFor="is_completed">Completed</Label>
 
-                <div class="grid gap-2">
-                    <Label htmlFor="name">Media</Label>
+                            <Switch id="is_completed" v-model:checked="form.is_completed" class="mt-1" />
 
-                    <Input type="file" id="file" v-on:change="fileSelected($event)" class="mt-1 block w-full"></Input>
+                            <InputError :message="form.errors.is_completed" />
+                        </div>
 
-                    
-                    <progress v-if="form.progress" :value="form.progress.percentage" max="100">{form.progress.percentage}%</progress>
 
-                    <InputError :message="form.errors.media" />
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="grid gap-2">
+                                <Label htmlFor="name">Media</Label>
 
-                    <img v-if="task.mediaFile" src="/favicon.svg" class="w-32 h-32 rounded-lg mx-auto mt-2" />
-                </div>
+                                <Input type="file" id="file" v-on:change="fileSelected($event)" class="w-full"></Input>
 
-                <div class="grid gap-2">
-                    <Label htmlFor="categories">Categories</Label>
+                                
+                                <progress v-if="form.progress" :value="form.progress.percentage" max="100">{form.progress.percentage}%</progress>
 
-                    <ToggleGroup type="multiple" variant="outline" size="lg" v-model="form.categories" class="w-full">
-                        <ToggleGroupItem v-for="category in categories"  :key="category.id" :value="category.id">
-                            {{ category.name }}
-                        </ToggleGroupItem>
-                    </ToggleGroup>
+                                <InputError :message="form.errors.media" />
 
-                    <InputError :message="form.errors.categories" />
-                </div>
+                                <!-- <img v-if="task.mediaFile" src="/favicon.svg" class="w-16 h-16 rounded-lg mx-auto mt-2" /> -->
+                            </div>
 
-                <div class="flex items-center gap-4">
-                    <Button :disabled="form.processing" variant="default">Update Task</Button>
-                </div>
+                            <div class="grid gap-2">
+                                <Label htmlFor="categories">Categories</Label>
+
+                                <ToggleGroup type="multiple" variant="outline" size="lg" v-model="form.categories" class="flex flex-wrap gap-2 justify-start w-full">
+                                    <ToggleGroupItem v-for="category in categories"  :key="category.id" :value="category.id">
+                                        {{ category.name }}
+                                    </ToggleGroupItem>
+                                </ToggleGroup>
+
+                                <InputError :message="form.errors.categories" />
+                            </div>
+                        </div>
+                    </CardContent>
+
+                    <CardFooter class="flex justify-between">
+                        <div class="flex items-center gap-4">
+                            <Button :disabled="form.processing" variant="default">Update Task</Button>
+                        </div>
+                    </CardFooter>
+                </Card>
+
+                
             </form>
         </div>
     </AppLayout>
