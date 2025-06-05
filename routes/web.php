@@ -4,6 +4,7 @@ use App\Http\Controllers\TaskCategoryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', function () {
@@ -11,10 +12,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
- 
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
+
     Route::resource('tasks', TaskController::class);
     Route::resource('task-categories', TaskCategoryController::class);
 });
