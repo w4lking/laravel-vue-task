@@ -47,6 +47,9 @@ defineProps<Props>();
                     <p class="text-xl">{{ pendingTasksToday }} task(-s) due today.</p>
                 </div>
 
+            </div>
+
+            <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                     <h2 class="pb-4 text-center text-3xl font-bold pt-4">Tasks by Day</h2>
                     <BarChart
@@ -54,11 +57,6 @@ defineProps<Props>();
                         :data="tasksCreatedByDay"
                         index="name"       :categories="['TotalTasks']" label="Tasks Created" />
                 </div>
-
-            </div>
-
-            <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
-                <PlaceholderPattern />
             </div>
         </div>
     </AppLayout>
